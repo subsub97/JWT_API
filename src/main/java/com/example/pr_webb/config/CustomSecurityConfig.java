@@ -1,6 +1,9 @@
 package com.example.pr_webb.config;//package com.example.pr_jwt.config;
 
-import com.example.pr_webb.security.APIUserDetailsService;
+import com.example.pr_webb.Repository.APIUserRepository;
+import com.example.pr_webb.config.oauth.OAuth2SuccessHandler;
+import com.example.pr_webb.config.oauth.OAuth2UserCustomService;
+import com.example.pr_webb.service.APIUserDetailsService;
 import com.example.pr_webb.security.filter.APILoginFilter;
 import com.example.pr_webb.security.filter.RefreshTokenFilter;
 import com.example.pr_webb.security.filter.TokenCheckFilter;
@@ -8,7 +11,6 @@ import com.example.pr_webb.security.handler.APILoginSuccessHandler;
 import com.example.pr_webb.util.JWTUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +23,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.OAuth2AuthorizationSuccessHandler;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -38,6 +41,8 @@ public class CustomSecurityConfig {
 
     //주입
     private final APIUserDetailsService apiUserDetailsService;
+
+    private final APIUserRepository apiUserRepository;
 
     private final JWTUtil jwtUtil;
 
@@ -102,6 +107,16 @@ public class CustomSecurityConfig {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);// <- 세션을 사용하지 않음
 
+
+
+        //OauthLogin 로직
+        http.oauth2Login()
+                .authorizationEndpoint()
+                .and()
+                .successHandler(new OAuth2SuccessHandler(jwtUtil)) //인증 성공 시 실행할 핸들러
+                .userInfoEndpoint()
+                .userService(new OAuth2UserCustomService(apiUserRepository));
+
         return http.build();
     }
 
@@ -123,4 +138,5 @@ public class CustomSecurityConfig {
         source.registerCorsConfiguration("/**", config);
         return source;
     }
+
 }

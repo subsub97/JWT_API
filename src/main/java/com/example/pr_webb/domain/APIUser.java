@@ -2,13 +2,14 @@ package com.example.pr_webb.domain;
 
 import lombok.*;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
 @Entity
 @Getter
 @Builder
-@AllArgsConstructor
+
 @NoArgsConstructor
 @ToString
 
@@ -16,12 +17,34 @@ public class APIUser {
 
     @Id
     private String mid;
+
+    @Column(name="mpw")
     private String mpw;
 
-    public void changePw(String mpw){
+    @Column(name = "nickname",unique = true)
+    private String nickname;
+
+    public void changePw(String mpw) {
         this.mpw = mpw;
     }
-}
 
+    public APIUser(String mid, String password) {
+        this.mid = mid;
+        this.mpw = password;
+    }
+
+    @Builder
+    public APIUser(String email, String password, String nickname) {
+        this.mid = email;
+        this.mpw = password;
+        this.nickname = nickname;
+    }
+
+    public APIUser update(String nickname) {
+        this.nickname = nickname;
+
+        return this;
+    }
+}
 //APIUser 는 Access Key를 발급받을 때 자신의 mid와 mpw를 이용하므로 다른 정보들 없이
 // 구성하였습니다.

@@ -1,4 +1,4 @@
-package com.example.pr_webb.security;
+package com.example.pr_webb.service;
 
 import com.example.pr_webb.Repository.APIUserRepository;
 import com.example.pr_webb.domain.APIUser;
