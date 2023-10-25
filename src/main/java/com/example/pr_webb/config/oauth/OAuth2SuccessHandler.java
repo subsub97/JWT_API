@@ -58,6 +58,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         response.getWriter().println(jsonStr);
 
+        getRedirectStrategy().sendRedirect(request, response, "/chat");
 
     }
  }

@@ -23,7 +23,10 @@ public class OAuth2UserCustomService  extends DefaultOAuth2UserService {
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         //요청을 바탕으로 유저 정보를 담은 객체 반환
+        System.out.println("userRequest :" + userRequest);
         OAuth2User user = super.loadUser(userRequest);
+        Map<String, Object> attributes = user.getAttributes();
+        System.out.print(attributes.get("email"));
         saveOrUpdate(user);
         return user;
     }
@@ -35,8 +38,11 @@ public class OAuth2UserCustomService  extends DefaultOAuth2UserService {
         String email = (String) attributes.get("email");
         String name =(String) attributes.get("name");
 
+        System.out.println("email : " + email);
+        System.out.println("name : " + email);
 
-        APIUser apiUserEntity = apiUserRepository.findByEmail(email)
+
+        APIUser apiUserEntity = apiUserRepository.findByMid(email)
                 .orElse(null);
 
         if(apiUserEntity == null) {

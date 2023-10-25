@@ -22,8 +22,8 @@ public class APIUserService {
                 .build()).getMid();
     }
 
-    public APIUser findByEmail(String email) {
-        return apiUserRepository.findByEmail(email)
+    public APIUser findByMid(String email) {
+        return apiUserRepository.findByMid(email)
                 .orElseThrow(() -> new IllegalArgumentException("Unexpected user"));
     }
 }

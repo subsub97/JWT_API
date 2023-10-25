@@ -11,6 +11,7 @@ import com.example.pr_webb.security.handler.APILoginSuccessHandler;
 import com.example.pr_webb.util.JWTUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,9 +43,10 @@ public class CustomSecurityConfig {
     //주입
     private final APIUserDetailsService apiUserDetailsService;
 
-    private final APIUserRepository apiUserRepository;
-
     private final JWTUtil jwtUtil;
+
+    @Autowired
+    private OAuth2UserCustomService oAuth2UserCustomService;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -109,13 +111,17 @@ public class CustomSecurityConfig {
 
 
 
+
+
         //OauthLogin 로직
         http.oauth2Login()
-                .authorizationEndpoint()
-                .and()
                 .successHandler(new OAuth2SuccessHandler(jwtUtil)) //인증 성공 시 실행할 핸들러
                 .userInfoEndpoint()
-                .userService(new OAuth2UserCustomService(apiUserRepository));
+                .userService(oAuth2UserCustomService);
+
+        http.logout()
+                .logoutSuccessUrl("/files/apiLogin.html");
+
 
         return http.build();
     }
